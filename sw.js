@@ -1,5 +1,5 @@
 // --- Bailey's Exchange service worker (v3) ---
-const SHELL = 'bailey-fx-shell-v3';
+const SHELL = 'bailey-fx-shell-v4';
 const API   = 'bailey-fx-api-v1';
 
 // Detect base path from registration scope (works for root or /fx/)
@@ -86,3 +86,4 @@ self.addEventListener('fetch', (event) => {
     event.respondWith(caches.match(req).then(cached => cached || fetch(req)));
   }
 });
+
