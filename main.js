@@ -121,3 +121,13 @@ document.addEventListener('DOMContentLoaded', () => {
   window.addEventListener('online', updateNetBadge);
   window.addEventListener('offline', updateNetBadge);
 });
+
+// Service Worker registration (needed for offline + install)
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/sw.js', { scope: '/' })
+      .catch(err => console.error('SW registration failed:', err));
+  });
+}
+
+
