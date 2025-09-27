@@ -1,35 +1,45 @@
-// --- Bailey's Exchange service worker (v2) ---
-const SHELL_CACHE = 'bailey-fx-shell-v2';
-const API_CACHE   = 'bailey-fx-api-v1';
+// --- Bailey's Exchange service worker (v3) ---
+const SHELL = 'bailey-fx-shell-v3';
+const API   = 'bailey-fx-api-v1';
 
-const APP_ASSETS = [
-  '/index.html',
-  '/styles.css',
-  '/main.js',
-  '/site.webmanifest',
-  '/favicon.ico',
-  '/bailey-exchange-icon-180.png',
-  '/bailey-exchange-icon-192.png',
-  '/bailey-exchange-icon-512.png'
+// Detect base path from registration scope (works for root or /fx/)
+const BASE = new URL(self.registration.scope).pathname.replace(/\/$/, '');
+
+// List ONLY files that actually exist on your site
+const RAW_ASSETS = [
+  'index.html',
+  'styles.css',
+  'main.js',
+  'site.webmanifest',
+  'favicon.ico',
+  // keep only the icon sizes you have uploaded
+  'bailey-exchange-icon-192.png',
+  'bailey-exchange-icon-512.png'
 ];
 
+const APP_ASSETS = RAW_ASSETS.map(p => `${BASE}/${p}`);
+
 self.addEventListener('install', (event) => {
-  event.waitUntil(
-    caches.open(SHELL_CACHE)
-      .then(cache => cache.addAll(APP_ASSETS))
-      .then(() => self.skipWaiting())
-  );
+  event.waitUntil((async () => {
+    const cache = await caches.open(SHELL);
+    // Add each asset individually so one 404 doesn’t kill the whole install
+    for (const url of APP_ASSETS) {
+      try {
+        await cache.add(url);
+      } catch (e) {
+        console.warn('[SW] precache skipped:', url, e?.message || e);
+      }
+    }
+    await self.skipWaiting();
+  })());
 });
 
 self.addEventListener('activate', (event) => {
-  event.waitUntil(
-    caches.keys().then(keys =>
-      Promise.all(keys
-        .filter(k => ![SHELL_CACHE, API_CACHE].includes(k))
-        .map(k => caches.delete(k))
-      )
-    ).then(() => self.clients.claim())
-  );
+  event.waitUntil((async () => {
+    const keys = await caches.keys();
+    await Promise.all(keys.filter(k => ![SHELL, API].includes(k)).map(k => caches.delete(k)));
+    await self.clients.claim();
+  })());
 });
 
 self.addEventListener('fetch', (event) => {
@@ -38,15 +48,14 @@ self.addEventListener('fetch', (event) => {
 
   const url = new URL(req.url);
 
-  // 1) Top-level navigations: network-first, fallback to cached index.html
+  // 1) Navigations: network-first, fallback to cached index.html (handles / and /?from=…)
   if (req.mode === 'navigate') {
     event.respondWith((async () => {
       try {
         return await fetch(req);
       } catch {
-        // Serve your app shell when offline (works for / and /?from=GBP&to=USD etc.)
-        const cache = await caches.open(SHELL_CACHE);
-        return (await cache.match('/index.html')) || Response.error();
+        const cache = await caches.open(SHELL);
+        return (await cache.match(`${BASE}/index.html`)) || Response.error();
       }
     })());
     return;
@@ -57,26 +66,23 @@ self.addEventListener('fetch', (event) => {
     event.respondWith((async () => {
       try {
         const netRes = await fetch(req);
-        const cache = await caches.open(API_CACHE);
+        const cache = await caches.open(API);
         cache.put(req, netRes.clone());
         return netRes;
       } catch {
-        const cache = await caches.open(API_CACHE);
+        const cache = await caches.open(API);
         const cached = await cache.match(req);
         if (cached) return cached;
         return new Response(JSON.stringify({ error: 'Offline and no cached rate' }), {
-          status: 503,
-          headers: { 'Content-Type': 'application/json' }
+          status: 503, headers: { 'Content-Type': 'application/json' }
         });
       }
     })());
     return;
   }
 
-  // 3) Same-origin static assets: cache-first
+  // 3) Same-origin static files: cache-first
   if (url.origin === self.location.origin) {
-    event.respondWith(
-      caches.match(req).then(cached => cached || fetch(req))
-    );
+    event.respondWith(caches.match(req).then(cached => cached || fetch(req)));
   }
 });
