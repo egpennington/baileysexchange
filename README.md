@@ -44,19 +44,6 @@ Author: **penningtonProgramming**
    ```
 3. Change currencies/amounts — you’ll see `1 FROM = RATE TO` and the converted sum.
 
-### Minimal HTML/JS Entry Points
-
-* **index.html** includes:
-
-  * two `<select>`s: `#from`, `#to`
-  * `<input type="number" id="amount">`
-  * `<pre id="out">` for output
-* **main.js** does:
-
-  * `fetch('https://api.frankfurter.dev/v1/latest?base=FROM&symbols=TO')`
-  * `converted = amount * data.rates[TO]`
-  * pretty prints with `Intl.NumberFormat`
-
 ---
 
 ## ⚠️ Limitations
@@ -76,3 +63,4 @@ MIT © Emmett Pennington
 
 * **Frankfurter** — free, no‑key API backed by ECB reference rates.
 * Inspiration: **Bailey** — the original Pound Hound.
+
