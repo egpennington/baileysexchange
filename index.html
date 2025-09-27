@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
+    <meta name="description" content="Offline‑friendly currency converter for travel. Uses the Frankfurter API">
+    <meta name="keywords" content="FX, ForEx, Currency Converter, HTML, CSS, JavaScript">
+    <meta name="author" content="penningtonProgramming">
+    <meta name="theme-color" content="#0b1f3b">
+    <title>Bailey's Exchange</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
+    <link rel="manifest" href="/site.webmanifest">
+  </head>
+<body class="wrap">
+  <div class="card">
+    <div class="header">
+      <h1>BAILEY'S Exchange <span id="net" class="badge">online</span></h1>
+      <img src="BXLogo.png" class="logo">
+    </div>
+    <div class="grid">
+      <div>
+        <label for="from">From</label>
+        <select id="from" aria-label="From currency">
+          <option value="GBP">GBP — British Pound</option>
+          <option value="KRW">KRW — South Korean Won</option>
+          <option value="JPY">JPY — Japanese Yen</option>
+          <option value="EUR">EUR — Euro</option>
+          <option value="USD">USD — US Dollar</option>
+        </select>
+      </div>
+
+      <div>
+        <label for="to">To</label>
+        <select id="to" aria-label="To currency">
+          <option value="USD">USD — US Dollar</option>
+          <option value="GBP">GBP — British Pound</option>
+          <option value="KRW">KRW — South Korean Won</option>
+          <option value="JPY">JPY — Japanese Yen</option>
+          <option value="EUR">EUR — Euro</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="row" style="margin-top:12px;">
+      <div>
+        <label for="amount">Amount (<span id="fromCode">GBP</span>)</label>
+        <input id="amount" type="number" inputmode="decimal" autocomplete="off" min="0" step="0.01" value="1" />
+      </div>
+      <div class="row btn">
+        <button id="swap" title="Swap currencies">Swap</button>
+        <button id="refresh" class="secondary" title="Refresh rate">Refresh</button>
+      </div>
+    </div>
+
+    <div class="out" id="out" aria-live="polite">—</div>
+    <div class="muted" id="status" aria-live="polite">Source: ECB mid-market via Frankfurter • Updated: —</div>
+  </div>
+  <footer class="footer">
+        <a href="https://emmettpennington.com" target="_blank" rel="noopener noreferrer">&copy; 2025 BAILEY'S Exchange V0.1.0 <span class="sm-span">penningtonProgramming</span></a>
+    </footer>
+    <script src="main.js"></script>
+</body>
+</html>

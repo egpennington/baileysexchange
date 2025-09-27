@@ -1,0 +1,25 @@
+{
+  "id": "/",
+  "name":"Bailey's Exchange",
+  "short_name":"Bailey's FX",
+  "description": "Offline-friendly currency converter for travel. Uses the Frankfurter API.",
+  "start_url": "/",
+  "scope": "/",
+  "icons":
+     [
+       {
+         "src":"android-chrome-192x192.png",
+         "sizes":"192x192",
+         "type":"image/png"
+        },
+        {
+          "src":"android-chrome-512x512.png",
+          "sizes":"512x512",
+          "type":"image/png"
+         }
+       ],
+   "categories": ["finance", "travel", "utilities"],    
+   "theme_color":"#0b1f2e",
+   "background_color":"#ffffff",
+   "display":"standalone"
+}
